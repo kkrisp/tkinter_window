@@ -4,11 +4,14 @@ from tkinter import Label
 from tkinter import Entry
 from tkinter import PhotoImage
 from tkinter import IntVar
+from tkinter import GROOVE
 import math
 
 # style ------------------------------- #
 #bg_color = '#b7c6d8'
 bg_color = '#f0f0f0' #gray
+frame_color = '#d7dce0' #a bit darker blueish gray
+title_bg_color = '#a1a9c6'
 dish_color = '#e0e7ee'
 wall_color = '#577892'
 drop_color = '#915aa7' #light purple
@@ -37,28 +40,32 @@ class Movements:
 
         self.button_pics.append(PhotoImage(file = "plus.png"))
         self.button_pics.append(PhotoImage(file = "minus.png"))
+        self.xy_label_pic = PhotoImage(file = "xy_label.png")
+        self.z_label1_pic = PhotoImage(file = "z_raise.png")
+        self.z_label2_pic = PhotoImage(file = "z_lower.png")
+        self.ex_label1_pic = PhotoImage(file = "ex_push.png")
+        self.ex_label2_pic = PhotoImage(file = "ex_pull.png")
 
         main_frame = Frame(root, pady=15, padx=15)
         main_frame.grid(row=row,  column=col, sticky="nsew")
 
-        xy_frame = Frame(main_frame, pady=15, padx=15)
+        xy_frame = Frame(main_frame, pady=15, padx=40, borderwidth=2, relief=GROOVE)
         xy_frame.grid(row=2,  column=0, sticky="nsew", columnspan=2)
-        z_frame = Frame(main_frame, pady=15, padx=15)
+        z_frame = Frame(main_frame, pady=15, padx=15, borderwidth=2, relief=GROOVE)
         z_frame.grid(row=4,  column=0, sticky="nsew")
-        ex_frame = Frame(main_frame, pady=15, padx=15)
+        ex_frame = Frame(main_frame, pady=15, padx=15, borderwidth=2, relief=GROOVE)
         ex_frame.grid(row=4,  column=1, sticky="nsew")
 
         #spacer = Frame(main_frame, bg=bg_color, height=20, width=300)
         #spacer.grid(row=1, column=0, columnspan=3)
 
-        self.subtitle_xy = Label(main_frame, text = "head", borderwidth=5, font=(label_font, label_size+3))
-        self.subtitle_xy.grid(sticky="w", row = 0, column=0)
-        self.subtitle_z = Label(main_frame, text = "table", borderwidth=5, font=(label_font, label_size+3))
-        self.subtitle_z.grid(sticky="w", row = 3, column=0)
-        self.subtitle_ex = Label(main_frame, text = "extruder", borderwidth=5, font=(label_font, label_size+3))
-        self.subtitle_ex.grid(sticky="w", row = 3, column=1)
+        self.subtitle_xy = Label(main_frame, text = "head", font=(label_font, label_size+3), bg=frame_color, borderwidth=2, relief=GROOVE)
+        self.subtitle_xy.grid(sticky="ew", row = 0, column=0, columnspan=2)
+        self.subtitle_z = Label(main_frame, text = "table", bg=frame_color, borderwidth=2, relief=GROOVE, font=(label_font, label_size+3))
+        self.subtitle_z.grid(sticky="ew", row = 3, column=0)
+        self.subtitle_ex = Label(main_frame, text = "extruder", bg=frame_color, borderwidth=2, relief=GROOVE, font=(label_font, label_size+3))
+        self.subtitle_ex.grid(sticky="ew", row = 3, column=1)
 
-        self.labels = {}
         self.entries = {}
         self.buttons = {}
 
@@ -84,6 +91,7 @@ class Movements:
         self.buttons["right10"] = Button(xy_frame, image=self.button_pics[11], command=lambda: self.move_head("right", 10))
         self.buttons["xy_plus" ] = Button(xy_frame, image=self.button_pics[12], command=lambda: self.add("xy", 1))
         self.buttons["xy_minus"] = Button(xy_frame, image=self.button_pics[13], command=lambda: self.add("xy", -1))
+        self.xy_label = Label(xy_frame, image=self.xy_label_pic)
 
         self.entries["table"] = Entry(z_frame, text = z_entry_value, borderwidth=1, width=6, justify="center", font=(entry_font, entry_size))
         self.buttons["table_up01"] = Button(z_frame, image=self.button_pics[0], command=lambda: self.move_table("table_up", 0.1))
@@ -94,6 +102,8 @@ class Movements:
         self.buttons["table_down10"] = Button(z_frame, image=self.button_pics[5], command=lambda: self.move_table("table_down", 10))
         self.buttons["table_plus"  ] = Button(z_frame, image=self.button_pics[12], command=lambda: self.add("table", 1))
         self.buttons["table_minus"] = Button(z_frame, image=self.button_pics[13], command=lambda: self.add("table", -1))
+        self.z_label1 = Label(z_frame, image=self.z_label1_pic)
+        self.z_label2 = Label(z_frame, image=self.z_label2_pic)
 
         self.entries["ex"] = Entry(ex_frame, text = ex_entry_value, borderwidth=1, width=6, justify="center", font=(entry_font, entry_size))
         self.buttons["ex_up01"] = Button(ex_frame, image=self.button_pics[0], command=lambda: self.move_extruder("ex_up", 0.1))
@@ -104,23 +114,28 @@ class Movements:
         self.buttons["ex_down10"] = Button(ex_frame, image=self.button_pics[5], command=lambda: self.move_extruder("ex_down", 10))
         self.buttons["ex_plus"  ] = Button(ex_frame, image=self.button_pics[12], command=lambda: self.add("ex", 1))
         self.buttons["ex_minus"] = Button(ex_frame, image=self.button_pics[13], command=lambda: self.add("ex", -1))
+        self.ex_label1 = Label(ex_frame, image=self.ex_label1_pic)
+        self.ex_label2 = Label(ex_frame, image=self.ex_label2_pic)
 
+        self.xy_label.grid(row=0, column=0, rowspan=2, columnspan=2)
         self.buttons["up01"   ].grid(row=2, column=3)
         self.buttons["up"     ].grid(row=1, column=3)
         self.buttons["up10"   ].grid(row=0, column=3)
         self.buttons["down01" ].grid(row=4, column=3)
         self.buttons["down"   ].grid(row=5, column=3)
         self.buttons["down10" ].grid(row=6, column=3)
-        self.buttons["left01" ].grid(row=4, column=2, rowspan=2)
-        self.buttons["left"   ].grid(row=4, column=1, rowspan=2)
-        self.buttons["left10" ].grid(row=4, column=0, rowspan=2)
-        self.buttons["right01"].grid(row=4, column=4, rowspan=2)
-        self.buttons["right"  ].grid(row=4, column=5, rowspan=2)
-        self.buttons["right10"].grid(row=4, column=6, rowspan=2)
-        self.buttons["xy_minus"].grid(row=3, column=2)
-        self.buttons["xy_plus"].grid(row=3, column=4)
+        self.buttons["left01" ].grid(row=3, column=2, rowspan=1)
+        self.buttons["left"   ].grid(row=3, column=1, rowspan=1)
+        self.buttons["left10" ].grid(row=3, column=0, rowspan=1)
+        self.buttons["right01"].grid(row=3, column=4, rowspan=1)
+        self.buttons["right"  ].grid(row=3, column=5, rowspan=1)
+        self.buttons["right10"].grid(row=3, column=6, rowspan=1)
+        self.buttons["xy_minus"].grid(row=2, column=2)
+        self.buttons["xy_plus"].grid(row=2, column=4)
         self.entries["xy"].grid(row=3, column=3)
         
+        self.z_label1.grid(row=0, column=0, rowspan=2)
+        self.z_label2.grid(row=5, column=0, rowspan=2)
         self.buttons["table_up01"].grid(row=2, column=1)
         self.buttons["table_up"  ].grid(row=1, column=1)
         self.buttons["table_up10"].grid(row=0, column=1)
@@ -130,7 +145,9 @@ class Movements:
         self.buttons["table_plus"].grid(row=3, column=2)
         self.buttons["table_minus"].grid(row=3, column=0)
         self.entries["table"].grid(row=3, column=1)
-
+        
+        self.ex_label2.grid(row=0, column=0, rowspan=2)
+        self.ex_label1.grid(row=5, column=0, rowspan=2)
         self.buttons["ex_up01"].grid(row=2, column=1)
         self.buttons["ex_up"  ].grid(row=1, column=1)
         self.buttons["ex_up10"].grid(row=0, column=1)
