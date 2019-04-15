@@ -181,7 +181,6 @@ class Movements:
 class Camera_preview:
     def __init__(self, root, row=0, col=0):
         self.button_pics = []
-        self.base = 3
         for d in ['up', 'down', 'left', 'right']:
             self.button_pics.append(PhotoImage(file = "move_" + d + ".png"))
             self.button_pics.append(PhotoImage(file = "move10_" + d + ".png"))
@@ -191,7 +190,7 @@ class Camera_preview:
 
         buttons_frame = Frame(main_frame, pady=15, padx=15)
         buttons_frame.grid(row=0,  column=0, sticky="nsew")
-        camera_frame = Frame(main_frame, pady=15, padx=15, width=600, height=600, bg="blue")
+        camera_frame = Frame(main_frame, pady=15, padx=15, width=600, height=600, bg=frame_color, borderwidth=2, relief=GROOVE)
         camera_frame.grid(row=0,  column=1, sticky="nsew")
 
         self.labels = {}
@@ -207,4 +206,3 @@ class Camera_preview:
         self.buttons["zoom_out"].grid(row=1, sticky="ew")
         self.buttons["snap"].grid(row=2    , sticky="ew")
         self.buttons["rec"].grid(row=3     , sticky="ew")
-
