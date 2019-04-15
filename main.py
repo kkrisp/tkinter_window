@@ -1,5 +1,6 @@
 # this is a plain window, actually for the cellprinter app
 from tkinter import *
+from tkinter import ttk
 import math
 
 # style ------------------------------- #
@@ -11,15 +12,18 @@ drop_color = '#915aa7' #light purple
 #drop_color = '#412847' #dark purple
 drop_line = '' # no color
 
-preview_size = 400
 border = 10
-dish_size = preview_size-border*2
 dish_wall = 10
 droplet_ratio = 10.0
 label_size = 10
 label_font = "Courier"
 entry_size = 13
 entry_font = "Courier"
+#preview_size = root.winfo_screenheight()
+dish_real_diameter = 35000 #um
+ratio = 1.0/100.0
+dish_size = dish_real_diameter*ratio
+preview_size = dish_size+dish_wall+border
 
 def _create_circle(self, x, y, r, **kwargs):
     return self.create_oval(x-r, y-r, x+r, y+r, **kwargs)
@@ -29,10 +33,42 @@ class Petri_preview:
     def __init__(self, root, row=0, col=0):
         prev_frame = Frame(root)
         prev_frame.grid(row=row,  column=col)
+        self.subtitle = Label(prev_frame, text = "Preview", borderwidth=5, font=(label_font, label_size+3))
+        self.subtitle.grid(sticky=W, row = 0, column=0)
+
+        self.x_offset_label = Label(prev_frame, text="Horizontal offset  (mm)", borderwidth=3, font=(label_font, label_size))
+        self.y_offset_label = Label(prev_frame, text="Vertical offset    (mm)", borderwidth=3, font=(label_font, label_size))
+        x_offset_value = IntVar()
+        x_offset_value.set(dish_real_diameter/2*ratio)
+        y_offset_value = IntVar()
+        y_offset_value.set(dish_real_diameter/2*ratio)
+        self.x_offset_entry = Entry(prev_frame, text = x_offset_value, borderwidth=1, width=6, justify=CENTER, font=(entry_font, label_size))
+        self.y_offset_entry = Entry(prev_frame, text = y_offset_value, borderwidth=1, width=6, justify=CENTER, font=(entry_font, label_size))
+        self.refresh_button = Button(prev_frame, text ="refresh", borderwidth=4, width=7, height=1, font=(entry_font, label_size), command=self.refresh)
+        self.center_button = Button(prev_frame, text = "center",  borderwidth=4, width=7, height=1, font=(entry_font, label_size), command=self.center)
+        self.spacer = Frame(prev_frame, borderwidth=1)
+
+        self.x_offset_label.grid(row=1, column=0, sticky="w")
+        self.x_offset_entry.grid(row=1, column=1, sticky="w")
+        self.y_offset_label.grid(row=2, column=0, sticky="w")
+        self.y_offset_entry.grid(row=2, column=1, sticky="w")
+        self.refresh_button.grid(row=1, column=3, sticky="w")
+        self.center_button.grid(row=2, column=3,  sticky="w")
+        self.spacer.grid(row=1, column=4, rowspan=2, sticky="ew")
+
         self.prev_area = Canvas(prev_frame, width=preview_size, height=preview_size, borderwidth=0, highlightthickness=0, bg=bg_color)
-        self.prev_area.grid(row = 0, column=0)
+        self.prev_area.grid(row = 3, column=0, columnspan=5)
         self.clear()
     
+    def refresh(self):
+        self.draw()
+    def center(self):
+        self.x_offset_entry.delete(0, END) # this will delete everything inside the entry
+        self.x_offset_entry.insert(END, dish_real_diameter/2*ratio) # and this will insert the word "WORLD" in the entry.
+        self.y_offset_entry.delete(0, END) # this will delete everything inside the entry
+        self.y_offset_entry.insert(END, dish_real_diameter/2*ratio) # and this will insert the word "WORLD" in the entry.
+        self.draw()
+
     def clear(self):
         self.prev_area.create_rectangle(preview_size, preview_size, border, border, fill=bg_color, outline="")
         self.prev_area.create_oval(border, # petri dish wall
@@ -55,14 +91,14 @@ class Petri_preview:
         growth = myopt.value("d++") * droplet_ratio
 
         self.clear()
-        height = dst*(row-1)
-        width =  dst*(col-1)
-        offset_x = (dish_size - width)/2.0 + border
-        offset_y = (dish_size - height)/2.0 + border
+        width =  dst*(col-1)/2.0
+        offset_x = eval(self.x_offset_entry.get())-width +dish_wall
 
         if myopt.value(name="hex"):
             distance_ratio = 0.866025403784 # sqrt(3)/2
             dst_red = dst * distance_ratio
+            height = dst_red*(row-1)/2.0
+            offset_y = eval(self.y_offset_entry.get())-height+dish_wall
             indent = dst_red/3.3
             for i in range(row):
                 indent *= -1
@@ -74,6 +110,8 @@ class Petri_preview:
                         fill=drop_color,
                         outline='')
         else:
+            height = dst*(row-1)/2.0
+            offset_y = eval(self.y_offset_entry.get())-height+dish_wall
             for i in range(row):
                 for j in range(col):
                     self.prev_area.create_circle(
@@ -138,9 +176,9 @@ class Settings:
 class Printsettings:
     def __init__(self, root, settings, row=0, col=0):
         frame = Frame(root, pady=15, padx=15)
-        frame.grid(row=row,  column=col)
-        self.subtitle = Label(frame, text = "Grid printing settings", borderwidth=5, font=(label_font, label_size+3))
+        frame.grid(row=row,  column=col, sticky="nsew")
         i=0
+        self.subtitle = Label(frame, text = "Grid printing settings", borderwidth=5, font=(label_font, label_size+3))
         self.subtitle.grid(sticky=W, row = i, column=0, columnspan=4)
         i+=1
         spacer = Frame(frame, bg=bg_color, height=20, width=300)
@@ -199,9 +237,12 @@ class Printsettings:
         spacer.grid(row=i, column=0, columnspan=4)
         i+=1
         # yes or no options
-        for name in ["eh", "hex", "cor"]:
+        for name in ["hex", "eh", "cor"]:
             self.buttons[name].grid(sticky=W, row = i, column=0, columnspan=4)
             i+=1
+        i+=1
+        bottom = Frame(frame, bg=bg_color, height=20, width=300)
+        bottom.grid(row=i, column=0, columnspan=4, sticky="ns")
 
     def add(self, val, name, allow_negative=False):
         x = eval(self.entries[name].get())
@@ -219,11 +260,22 @@ class Printsettings:
 
 root = Tk()
 root.title("Cellprinter GUI")
+style = ttk.Style(root)
+style.configure('lefttab.TNotebook', tabposition='ws')
+notebook = ttk.Notebook(root, style='lefttab.TNotebook')
+
 r_a_p = PhotoImage(file = "rightarrow.png")
 l_a_p = PhotoImage(file = "leftarrow.png")
-pprev = Petri_preview(root, row=0, col=1)
 myopt = Settings()
-opts = Printsettings(root, myopt, row=0, col=0)
+
+f1 = Frame(notebook, bg='red', width=200, height=200)
+f2 = Frame(notebook, bg='blue', width=200, height=200)
+notebook.add(f1, text='Move      ')
+notebook.add(f2, text='Print grid')
+notebook.pack()
+
+opts = Printsettings(f2, myopt, row=0, col=0)
+pprev = Petri_preview(f2, row=0, col=1)
 pprev.draw()
 
 root.mainloop()
