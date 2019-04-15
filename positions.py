@@ -21,5 +21,3 @@ dish_real_diameter = 35000 #um
 ratio = 1.0/100.0
 dish_size = dish_real_diameter*ratio
 preview_size = dish_size+dish_wall+border
-
-class Movements:
