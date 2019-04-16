@@ -9,7 +9,7 @@ class Settings:
             "h++":[0.0, "change head height"],
             "t"  :[0.0, "wait time between droplets"],
             "t++":[0.0, "change waiting time"],
-            "eh" :[1,   "extrude when head is lifted"],
+            "eh" :[1,   "extrude with head down"],
             "s"  :[1,   "print grid in an S route"],
             "cor":[2.3, "correct hysteresys"],
             "pul":[1,   "last extruder action"],

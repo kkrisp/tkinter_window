@@ -8,6 +8,7 @@ from print_grid import Printsettings
 from print_settings import Settings
 import movements as mv
 import positions as pos
+from gcontrol import Position
 
 myopt = Settings()
 root = Tk()
@@ -24,12 +25,20 @@ notebook.add(f2, text='Print grid')
 notebook.add(f3, text='Positions ')
 notebook.pack()
 
+mypositions = {}
+mypositions["old"] = Position()
+mypositions["old2"] = Position(100, 100, 100)
+
+mypos = pos.Positionlist(mypositions)
+mypos.add(Position(234, 112, 76), "new", "petri dish centre")
+mypos.add(Position(234, 112, 76), postype="material source")
+
 pprev = Petri_preview(f2, myopt, row=0, col=1)
 pset = Printsettings(f2, myopt, pprev, row=0, col=0)
 move = mv.Movements(f1, row=0, col=0)
 cam = mv.Camera_preview(f1, row=0, col=1)
-mypos = pos.Positions()
-pslist = pos.Position_list(f3, mypos)
+pslist = pos.Save(f1, row=1, col=0)
+pmanager = pos.Manager(f3, mypos, row=0, col=0)
 pprev.draw()
 
 root.mainloop()

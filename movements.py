@@ -4,6 +4,9 @@ from tkinter import Label
 from tkinter import Entry
 from tkinter import PhotoImage
 from tkinter import IntVar
+from tkinter import StringVar
+from tkinter import Checkbutton
+from tkinter import OptionMenu
 from tkinter import GROOVE
 import math
 
@@ -32,11 +35,11 @@ dish_size = dish_real_diameter*ratio
 preview_size = dish_size+dish_wall+border
 
 class Movements:
-    def __init__(self, root, row=0, col=0):
+    def __init__(self, root, row=0, col=0, rwsp=1):
         self.button_pics = []
         self.base = 3
         for i in range(12):
-            self.button_pics.append(PhotoImage(file = "g"+ str(i*5+2000) +".png"))
+            self.button_pics.append(PhotoImage(file = "gl"+ str(i*5+2000) +".png"))
 
         self.button_pics.append(PhotoImage(file = "plus.png"))
         self.button_pics.append(PhotoImage(file = "minus.png"))
@@ -47,24 +50,22 @@ class Movements:
         self.ex_label2_pic = PhotoImage(file = "ex_pull.png")
 
         main_frame = Frame(root, pady=15, padx=15)
-        main_frame.grid(row=row,  column=col, sticky="nsew")
+        main_frame.grid(row=row,  column=col, rowspan=rwsp, sticky="nsew")
 
-        xy_frame = Frame(main_frame, pady=15, padx=40, borderwidth=2, relief=GROOVE)
-        xy_frame.grid(row=2,  column=0, sticky="nsew", columnspan=2)
-        z_frame = Frame(main_frame, pady=15, padx=15, borderwidth=2, relief=GROOVE)
-        z_frame.grid(row=4,  column=0, sticky="nsew")
-        ex_frame = Frame(main_frame, pady=15, padx=15, borderwidth=2, relief=GROOVE)
-        ex_frame.grid(row=4,  column=1, sticky="nsew")
-
-        #spacer = Frame(main_frame, bg=bg_color, height=20, width=300)
-        #spacer.grid(row=1, column=0, columnspan=3)
+        xy_frame = Frame(main_frame, pady=15, padx=5, borderwidth=2, relief=GROOVE)
+        z_frame = Frame(main_frame, pady=15, padx=5, borderwidth=2, relief=GROOVE)
+        ex_frame = Frame(main_frame, pady=15, padx=5, borderwidth=2, relief=GROOVE)
 
         self.subtitle_xy = Label(main_frame, text = "head", font=(label_font, label_size+3), bg=frame_color, borderwidth=2, relief=GROOVE)
-        self.subtitle_xy.grid(sticky="ew", row = 0, column=0, columnspan=2)
         self.subtitle_z = Label(main_frame, text = "table", bg=frame_color, borderwidth=2, relief=GROOVE, font=(label_font, label_size+3))
-        self.subtitle_z.grid(sticky="ew", row = 3, column=0)
         self.subtitle_ex = Label(main_frame, text = "extruder", bg=frame_color, borderwidth=2, relief=GROOVE, font=(label_font, label_size+3))
-        self.subtitle_ex.grid(sticky="ew", row = 3, column=1)
+        
+        xy_frame.grid(row=1,  column=0, sticky="nsew")
+        z_frame.grid(row=1,  column=1, sticky="nsew")
+        ex_frame.grid(row=1,  column=2, sticky="nsew")
+        self.subtitle_xy.grid(sticky="ew", row = 0, column=0)
+        self.subtitle_z.grid(sticky="ew", row = 0, column=1)
+        self.subtitle_ex.grid(sticky="ew", row = 0, column=2)
 
         self.entries = {}
         self.buttons = {}
@@ -179,30 +180,31 @@ class Movements:
         self.entries[label].insert("end", x)
 
 class Camera_preview:
-    def __init__(self, root, row=0, col=0):
-        self.button_pics = []
-        for d in ['up', 'down', 'left', 'right']:
-            self.button_pics.append(PhotoImage(file = "move_" + d + ".png"))
-            self.button_pics.append(PhotoImage(file = "move10_" + d + ".png"))
-
+    def __init__(self, root, row=0, col=0, camera_frame=False):
         main_frame = Frame(root, pady=15, padx=15)
         main_frame.grid(row=row,  column=col, sticky="nsew")
 
-        buttons_frame = Frame(main_frame, pady=15, padx=15)
-        buttons_frame.grid(row=0,  column=0, sticky="nsew")
-        camera_frame = Frame(main_frame, pady=15, padx=15, width=600, height=600, bg=frame_color, borderwidth=2, relief=GROOVE)
-        camera_frame.grid(row=0,  column=1, sticky="nsew")
+        subtitle_cam = Label(main_frame, text = "camera", font=(label_font, label_size+3), bg=frame_color, borderwidth=2, relief=GROOVE)
+        subtitle_cam.grid(sticky="ew", row = 0, column=0, columnspan=2)
+        buttons_frame = Frame(main_frame, pady=15, padx=15, borderwidth=2, relief=GROOVE)
+        buttons_frame.grid(row=1,  column=0, sticky="nsew")
+        
+        if camera_frame:
+            camera_frame = Frame(main_frame, pady=15, padx=15, width=600, height=600, bg=frame_color, borderwidth=2, relief=GROOVE)
+            camera_frame.grid(row=0,  column=1, sticky="nsew")
 
         self.labels = {}
         self.entries = {}
         self.buttons = {}
-
+       
+        self.buttons["cam_on"] = Button(buttons_frame, text = "preview", font=(label_font))
         self.buttons["zoom_in"] = Button(buttons_frame, text = "zoom in", font=(label_font))
         self.buttons["zoom_out"] = Button(buttons_frame, text = "zoom out", font=(label_font))
         self.buttons["snap"] = Button(buttons_frame, text = "snap", font=(label_font))
-        self.buttons["rec"] = Button(buttons_frame, text = "start recording", font=(label_font))
-
-        self.buttons["zoom_in"].grid(row=0 , sticky="ew")
-        self.buttons["zoom_out"].grid(row=1, sticky="ew")
-        self.buttons["snap"].grid(row=2    , sticky="ew")
-        self.buttons["rec"].grid(row=3     , sticky="ew")
+        self.buttons["rec"] = Button(buttons_frame, text = "rec", font=(label_font))
+        
+        self.buttons["cam_on"].grid(row=0, columnspan=2, sticky="ew")
+        self.buttons["zoom_in"].grid(row=1, column=0, sticky="ew")
+        self.buttons["zoom_out"].grid(row=2, sticky="ew")
+        self.buttons["snap"].grid(row=3, sticky="ew")
+        self.buttons["rec"].grid(row=4, sticky="ew")

@@ -84,8 +84,8 @@ class Petri_preview:
                               fill=dish_color,
                               outline='')
     def draw(self):
-        row=int(self.ps.value(name="row"))
-        col=int(self.ps.value(name="col"))
+        row=int(self.ps.value(name="col"))
+        col=int(self.ps.value(name="row"))
         dia = self.ps.value("d"  ) * droplet_ratio
         dst = self.ps.value("dst") * droplet_ratio
         growth = self.ps.value("d++") * droplet_ratio
@@ -126,8 +126,8 @@ class Printsettings:
     def __init__(self, root, print_settings, preview, row=0, col=0):
         self.pprev = preview
         self.ps = print_settings
-        self.img_rightarrow = PhotoImage(file = "rightarrow.png")
-        self.img_leftarrow = PhotoImage(file = "leftarrow.png")
+        self.img_rightarrow = PhotoImage(file = "plus_small.png")
+        self.img_leftarrow = PhotoImage(file = "minus_small.png")
         frame = Frame(root, pady=15, padx=15)
         frame.grid(row=row,  column=col, sticky="nsew")
         i=0
