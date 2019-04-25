@@ -6,23 +6,24 @@ except ImportError:
     import Tkinter as tk
 
 import custom_widgets as cw
-import mystyle as stl
-import math # to correct numerical errors
+import mystyle as stl  # image path, fonts and colors
+import math            # to correct numerical errors
 
 class Move(tk.Frame):
     """A GUI for moving the printer head. It generates buttons
     to move in every (x, y, z) direction and to control the extruder.
     Movements have a base step size, which can be changed by the user.
-    To every direction belongs 3 buttons, which multiply the base step
-    size by 10, 1 or 0.1. Pressing one button sends a G-code to the
-    printer accordingly. 
+    In every direction there are 3 buttons, which multiply the base
+    step size by 10, 1 or 0.1. Pressing a button sends a G-code to the
+    printer accordingly.
     
-    'Movements' is an extension of the Frame class, with one extra
+    This class is an extension of the Frame class, with one extra
     parameter, 'printer', which is 'Printer' class and represents the
     printer the G-codes are sent to."""
     def __init__(self, *args, printer, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
-        # subframes and subtitles
+        
+        # creating subframes and subtitles
         self.printer = printer
         self.subtitle_xy = cw.Subtitle(self, text = "head")
         self.subtitle_z  = cw.Subtitle(self, text = "table")
@@ -30,7 +31,8 @@ class Move(tk.Frame):
         self.xy_frame = tk.Frame(self, pady=5, padx=5, borderwidth=2, relief=tk.GROOVE)
         self.z_frame  = tk.Frame(self, pady=18, padx=5, borderwidth=2, relief=tk.GROOVE)
         self.ex_frame = tk.Frame(self, pady=18, padx=5, borderwidth=2, relief=tk.GROOVE)
-
+        
+        # placing subframes and subtitles
         self.subtitle_xy.grid(sticky="ew", row = 0, column=0)
         self.subtitle_z.grid( sticky="ew", row = 0, column=1)
         self.subtitle_ex.grid(sticky="ew", row = 0, column=2)
@@ -38,10 +40,11 @@ class Move(tk.Frame):
         self.z_frame.grid( row=1,  column=1, sticky="nsew")
         self.ex_frame.grid(row=1,  column=2, sticky="nsew")
 
-        # entries and buttons
+        # entries and buttons are stored dicts
         self.entries = {}
         self.buttons = {}
 
+        # creating entries for the base steps
         self.xy_entry_value = tk.IntVar()
         self.z_entry_value  = tk.IntVar()
         self.ex_entry_value = tk.IntVar()
@@ -49,15 +52,13 @@ class Move(tk.Frame):
         self.z_entry_value.set( 1)
         self.ex_entry_value.set(0.1) # fine step for the extruder
         
-        
+        # direction images (follows: up 0.1, up 1, up 10, down.., left.., right.. )
         self.button_img = []
-        # images for directions (up 0.1, up 1, up 10, down..., left..., right... )
         for i in range(12):
             self.button_img.append(tk.PhotoImage(file=stl.imgpath+"gl"+ str(i*5+2000) +".png"))
         # images for changing values
         self.button_img.append(tk.PhotoImage(file = stl.imgpath+"plus.png"))
         self.button_img.append(tk.PhotoImage(file = stl.imgpath+"minus.png"))
-
         # images to explain directions
         self.xy_label_img = tk.PhotoImage(file = stl.imgpath+"xy_label.png")
         self.z_label1_img = tk.PhotoImage(file = stl.imgpath+"z_raise.png")
@@ -65,6 +66,7 @@ class Move(tk.Frame):
         self.ex_label1_img = tk.PhotoImage(file = stl.imgpath+"ex_push.png")
         self.ex_label2_img = tk.PhotoImage(file = stl.imgpath+"ex_pull.png")
 
+    # creating buttons and entries
         self.entries["xy"] = cw.Editbox(self.xy_frame, text =self.xy_entry_value, width=6)
         self.buttons["up01"] = tk.Button(self.xy_frame, image=self.button_img[0], command=lambda: self.move_head("Y", -0.1))
         self.buttons["up"  ] = tk.Button(self.xy_frame, image=self.button_img[1], command=lambda: self.move_head("Y", -1))
@@ -106,6 +108,8 @@ class Move(tk.Frame):
         self.ex_label1 = tk.Label(self.ex_frame, image=self.ex_label1_img)
         self.ex_label2 = tk.Label(self.ex_frame, image=self.ex_label2_img)
 
+    # placing buttons and entries in the grid
+        # head movements
         self.xy_label.grid(row=0, column=0, rowspan=2, columnspan=2)
         self.buttons["up01"   ].grid(row=2, column=3)
         self.buttons["up"     ].grid(row=1, column=3)
@@ -123,6 +127,7 @@ class Move(tk.Frame):
         self.buttons["xy_plus"].grid(row=2, column=4)
         self.entries["xy"].grid(row=3, column=3)
         
+        #table movements
         self.z_label1.grid(row=0, column=0, rowspan=2)
         self.z_label2.grid(row=5, column=0, rowspan=2)
         self.buttons["table_up01"].grid(row=2, column=1)
@@ -135,6 +140,7 @@ class Move(tk.Frame):
         self.buttons["table_minus"].grid(row=3, column=0)
         self.entries["table"].grid(row=3, column=1)
         
+        # extruder movements
         self.ex_label2.grid(row=0, column=0, rowspan=2)
         self.ex_label1.grid(row=5, column=0, rowspan=2)
         self.buttons["ex_up01"].grid(row=2, column=1)
@@ -147,6 +153,17 @@ class Move(tk.Frame):
         self.buttons["ex_minus"].grid(row=3, column=0)
         self.entries["ex"].grid(row=3, column=1)
 
+    def add(self, label, val, allow_negative=False):
+        """Changes the base step.
+        This function is for modifying it via clicking."""
+        x = eval(self.entries[label].get())
+        x = math.ceil(x*10)
+        if (x + val*10) >= 0 or allow_negative: x += val*10
+        x /= 10
+        self.entries[label].delete(0, "end")
+        self.entries[label].insert("end", x)
+
+    # G-code sending functions below
     def move_head(self, direction, multiplier):
         d = eval(self.entries["xy"].get())*multiplier
         #print("moving {}, {}".format(direction, d))
@@ -161,11 +178,3 @@ class Move(tk.Frame):
         d = eval(self.entries["ex"].get())*multiplier
         #print("moving {}, {}".format(direction, d))
         self.printer.m.send(direction+str(d))
-
-    def add(self, label, val, allow_negative=False):
-        x = eval(self.entries[label].get())
-        x = math.ceil(x*10)
-        if (x + val*10) >= 0 or allow_negative: x += val*10
-        x /= 10
-        self.entries[label].delete(0, "end")
-        self.entries[label].insert("end", x)

@@ -7,12 +7,11 @@ from gcontrol import Position as Position_o
 class Position(Position_o):
     """Extending the position class. Contains the
     coordinates and the type of the position of the
-    printer head."""
+    printer head (X, Z) and table (Z)."""
 
     # the valid types of the positions
     postype_list = ["plain", "petri", "source", "ceiling"]
 
-    # constuctor, 'plain' is the default position
     def __init__(self, x=0, y=0, z=0, postype="plain"):
         self.x = x
         self.y = y
@@ -52,13 +51,14 @@ class Message:
 
 class Printer:
     """Represents the printer, the program is connected to.
-    Contains the following:
+    Contains the
         -saved printer head positions in a dictionary
         -settings for grid printing in a dictionary
-    has functions for saving the current head position
+    Has functions for saving the current head position
     and printing grids using the settings dict."""
 
-    prID = "P"
+    prID = "P" # the default ID used in the communication with the router
+
     def __init__(self, socket=None, settings=None, positions=None, target_ID="*"):
         self.header = "ZT" + target_ID + Printer.prID +"000 "
         self.socket = socket
@@ -87,6 +87,14 @@ class Printer:
         self.use_petri = None
         self.use_ceiling = None
         self.use_source = None
+
+    def use_for_printing(self, name, postype):
+        if postype == "petri":
+            self.use_petri = name
+        if postype ==  "source":
+            self.use_source = name
+        if postype ==  "ceiling":
+            self.use_ceiling = name
 
     def parse_position(self):
         # this is what we need to parse:
@@ -119,11 +127,11 @@ class Printer:
         self.positions[name] = Position(x, y, z, postype)
         
     def move(self, name):
-        if not self.use_ceiling:
-            print("error, no ceiling set")
-            return
         self.m.send("G90")              # switch to absolute coordinates
-        self.m.send("G1 " + self.positions[self.use_ceiling].getz() )  # lift head to ceiling
+        try:
+            self.m.send("G1 " + self.positions[self.use_ceiling].getz() )  # lift head to ceiling
+        except KeyError:
+            pass
         self.m.send("G1 " + self.positions[name].getxy() ) # go over position
         self.m.send("G1 " + self.positions[name].getz() )  # lower head
         self.m.send("G91")              # switch to relative coordinates

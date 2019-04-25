@@ -7,6 +7,7 @@ button_font = "Courier 12"
 
 imgpath = 'img/' # path to the image files
 
+warning_color = '#e0948d' #pastel red
 bg_color = '#f0f0f0' #gray
 frame_color = '#d7dce0' #a bit darker blueish gray
 title_bg_color = '#a1a9c6'

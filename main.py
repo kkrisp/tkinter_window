@@ -9,6 +9,7 @@ except ImportError:
 
 import custom_widgets as cw
 import movements_frame as mv
+import position_manager_frame as pm
 import printer
 
 def main(printer):
@@ -26,12 +27,12 @@ def main(printer):
 
     # first tab (movements, camera and positions)
     move = mv.Move(    f1, printer=printer, pady=5, padx=5)
-    #pman = pm.Managerwindow(f1, printer=printer, pady=5, padx=5)
+    pman = pm.Positionlist(f1, printer=printer, pady=5, padx=5)
     #camc = mv.CameraControl(f1, main_socket=None,pady=5, padx=5)
 
     move.grid(row=0, column=0, columnspan = 1)
     #camc.grid(row=0, column=1, columnspan = 1)
-    #pman.grid(row=2, column=0, columnspan = 3)
+    pman.grid(row=1, column=0, columnspan = 1)
     root.mainloop()
 
 
