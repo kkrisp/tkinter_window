@@ -3,6 +3,7 @@ title_color = '#d7dce0' #light, blueish gray
 entry_font = "Courier 13"
 entry_color = "white"
 label_font = "Courier 10"
+button_font = "Courier 12"
 
 imgpath = 'img/' # path to the image files
 

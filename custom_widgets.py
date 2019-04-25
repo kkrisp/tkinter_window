@@ -6,7 +6,7 @@ except ImportError:
     # python 2.x
     import Tkinter as tk
 from gcontrol import Position as o_Position
-import style
+import mystyle as stl
 
 class Autoresized_Notebook(ttk.Notebook):
   """Snippet from stackoverflow"""
@@ -36,10 +36,11 @@ class Subtitle(tk.Label):
     """Label with darker colour and a border"""
     def __init__(self, *args, **kwargs):
         tk.Label.__init__(self, *args,
-                        font=style.title_font,
-                        bg=style.title_color,
+                        font=stl.title_font,
+                        bg=stl.title_color,
                         borderwidth=2,
-                        relief=tk.GROOVE)
+                        relief=tk.GROOVE,
+                        **kwargs)
 
 
 class Editbox(tk.Entry):
@@ -48,8 +49,8 @@ class Editbox(tk.Entry):
     and larger, monospace font"""
     def __init__(self, *args, **kwargs):
         tk.Entry.__init__(self, *args,
-                    font=style.entry_font,
-                    bg  =style.entry_color,
+                    font=stl.entry_font,
+                    bg  =stl.entry_color,
                     borderwidth=1,
                     justify="center",
                     takefocus = 0,
