@@ -4,6 +4,7 @@ entry_font = "Courier 13"
 entry_color = "white"
 label_font = "Courier 10"
 button_font = "Courier 12"
+small_font = "Courier 10"
 
 imgpath = 'img/' # path to the image files
 
@@ -16,7 +17,31 @@ wall_color = '#577892' # dark grey blue
 drop_color = '#915aa7' #light purple
 drop_color_dark = '#412847' #dark purple
 drop_line = '' # no color
+large_font = "Courier 14 bold"
 
 border = 10
 dish_wall = 10
 droplet_ratio = 10.0
+
+dish_real_diameter = 35000 #um
+ratio = 1.0/90.0
+dish_size = dish_real_diameter*ratio
+preview_size = dish_size+dish_wall+border
+volume_ratio = 1
+safety_factor = 2
+dscr = { # descriptions
+        "dst": "distance",
+        "d":   "size",
+        "h"  : "travel height",
+        "row": "columns",
+        "col": "rows",
+        "h++": "change print height",
+        "t"  : "sleep between droplets",
+        "t++": "change sleep time",
+        "eh" : "extrude with head down",
+        "s"  : "print grid in an S route",
+        "cor": "correct hysteresys",
+        "pul": "last extruder action",
+        "d++": "change size",
+        "hex": "hexagonal pattern"
+        }

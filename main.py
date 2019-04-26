@@ -35,8 +35,8 @@ def main(printer):
     camc = cc.CameraControl(f1, main_socket=None,pady=5, padx=5)
     
     # second tab (grid printing settings and preview)
-    prev = pg.Petri_preview(f2, print_settings=printer.settings, pady=5, padx=5)
-    pset = pg.Printsettings(f2, print_settings=printer.settings, preview=prev, pady=5, padx=5)
+    prev = pg.Preview(f2, printer=printer, pady=5, padx=5)
+    pset = pg.Settings(f2, printer=printer, preview=prev, pady=5, padx=5)
     pset.grid(row=0, column=0, sticky="nsew")
     prev.grid(row=0, column=1, sticky="nsew")
 

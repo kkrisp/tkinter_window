@@ -169,7 +169,46 @@ class Printer:
                 # if terminal route, move back the whole length and move down
                 else:
                     self.m.send("G1 X" + str(-(opt["col"]-1)*opt["dst"]) + " Y" + str(-opt["dst"]))
-    
+
+    def printGrid_hex(self):
+
+        opt = self.settings # to shorten lines
+        distance_ratio = 0.866025403784 # sqrt(3)/2
+        dst_re = opt["dst"] * distance_ratio # reduced distance
+        indent = dst_re/3.33333333
+
+        self.m.send("G91")      # switch to relative coordinates
+        if opt['pul']:
+            self.m.send("G1 E" + str(opt["cor"]))
+            opt['pul'] = False
+        leftToRight = 1 # 1 if left to right, -1 if right to left
+        cnt = 0
+        for y in range(opt["row"]):
+            indent *= -1
+            for x in range(opt["col"]):
+                # extrude high
+                if opt["eh"]: self.m.send("G1 E" + str(opt["d"] + opt["d++"] * cnt))
+                # lower head
+                self.m.send("G1 Z" + str(-opt["h"]))
+                # extrude low
+                if not opt["eh"]: self.m.send("G1 E" + str(opt["d"] + opt["d++"] * cnt))
+                # lift head
+                self.m.send("G1 Z" + str(opt["h"]+opt["h++"]*cnt))
+                # move over the next dot
+                if x < (opt["col"]-1): self.m.send("G1 X" + str(leftToRight*opt["dst"]))
+                # wait between dots
+                time.sleep(opt["t"] + opt["t++"]*cnt)
+                cnt += 1
+            # move over the first dot in the next row
+            if y<(opt["row"]-1):
+                # if S route, move one row down and change direction
+                if opt["s"]:
+                    self.m.send("G1 Y" + str(-dst_re))
+                    leftToRight *= -1
+                # if terminal route, move back the whole length and move down
+                else:
+                    self.m.send("G1 X" + str(-(opt["col"]-1)*opt["dst"]-indent) + " Y" + str(-dst_re))
+
     def connect(self):
         self.socket=socket.socket()
         socketID = 14323
