@@ -10,6 +10,8 @@ except ImportError:
 import custom_widgets as cw
 import movements_frame as mv
 import position_manager_frame as pm
+import camera_control_frame as cc
+import grid_setup_frame as pg
 import printer
 
 def main(printer):
@@ -22,17 +24,25 @@ def main(printer):
 
     #tabs
     f1 = tk.Frame(notebook, bg='#f0f0f0', width=200, height=200)
+    f2 = tk.Frame(notebook, bg='#f0f0f0', width=200, height=200)
     notebook.add(f1, text='    Move     ')
+    notebook.add(f2, text='    Print    ')
     notebook.pack()
 
     # first tab (movements, camera and positions)
     move = mv.Move(    f1, printer=printer, pady=5, padx=5)
     pman = pm.Positionlist(f1, printer=printer, pady=5, padx=5)
-    #camc = mv.CameraControl(f1, main_socket=None,pady=5, padx=5)
+    camc = cc.CameraControl(f1, main_socket=None,pady=5, padx=5)
+    
+    # second tab (grid printing settings and preview)
+    prev = pg.Petri_preview(f2, print_settings=printer.settings, pady=5, padx=5)
+    pset = pg.Printsettings(f2, print_settings=printer.settings, preview=prev, pady=5, padx=5)
+    pset.grid(row=0, column=0, sticky="nsew")
+    prev.grid(row=0, column=1, sticky="nsew")
 
     move.grid(row=0, column=0, columnspan = 1)
-    #camc.grid(row=0, column=1, columnspan = 1)
-    pman.grid(row=1, column=0, columnspan = 1)
+    camc.grid(row=0, column=1, columnspan = 1, sticky='n')
+    pman.grid(row=1, column=0, columnspan = 2)
     root.mainloop()
 
 

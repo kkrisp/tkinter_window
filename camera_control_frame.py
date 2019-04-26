@@ -4,12 +4,13 @@ try:
 except ImportError:
     # python 2.x
     import Tkinter as tk
-    
-from tkinter_window.mywidgets import Subtitle
-from tkinter_window.mywidgets import Editbox
+import custom_widgets as cw
+import mystyle as stl
 
 
 class CameraControl(tk.Frame):
+    """Sends commands to the script controlling the pi camera
+    via sockets."""
     def __init__(self, *args, main_socket, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
 
@@ -22,7 +23,7 @@ class CameraControl(tk.Frame):
         self.preview_on = False
         self.zoom_value = 0
 
-        self.subtitle_cam = Subtitle(self, "camera")
+        self.subtitle_cam = cw.Subtitle(self, text="camera")
         self.buttons_frame = tk.Frame(self, pady=5, padx=5)#, borderwidth=2, relief=tk.GROOVE)
 
         self.subtitle_cam.grid(sticky="ew", row = 0, column=0)
@@ -31,11 +32,11 @@ class CameraControl(tk.Frame):
         self.entries = {}
         self.buttons = {}
        
-        self.buttons["cam_on"] = tk.Button(self.buttons_frame, text = "preview", font=(label_font))
-        self.buttons["zoom_in"] = tk.Button(self.buttons_frame, text = "zoom in", font=(label_font), command=self.zoom_in)
-        self.buttons["zoom_out"] = tk.Button(self.buttons_frame, text = "zoom out", font=(label_font), command=self.zoom_out)
-        self.buttons["snap"] = tk.Button(self.buttons_frame, text = "snap", font=(label_font), command=self.snap)
-        self.buttons["rec"] = tk.Button(self.buttons_frame, text = "rec", font=(label_font))
+        self.buttons["cam_on"] = tk.Button(self.buttons_frame, text = "preview", font=stl.button_font)
+        self.buttons["zoom_in"] = tk.Button(self.buttons_frame, text = "zoom in", font=stl.button_font, command=self.zoom_in)
+        self.buttons["zoom_out"] = tk.Button(self.buttons_frame, text = "zoom out", font=stl.button_font, command=self.zoom_out)
+        self.buttons["snap"] = tk.Button(self.buttons_frame, text = "snap", font=stl.button_font, command=self.snap)
+        self.buttons["rec"] = tk.Button(self.buttons_frame, text = "rec", font=stl.button_font)
         
         self.buttons["cam_on"].grid(row=0, columnspan=2, sticky="ew")
         self.buttons["zoom_in"].grid(row=1, column=0, sticky="ew")

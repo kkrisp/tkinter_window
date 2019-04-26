@@ -13,6 +13,8 @@ import custom_widgets as cw
 
 
 class Controls(tk.Frame):
+    """Generates the buttons and pop-up windows used to modify
+    the position list and to send the printer to the given position"""
     def __init__(self, *args, position_manager, **kwargs):
         self.posman = position_manager
         tk.Frame.__init__(self, *args, **kwargs)
@@ -31,10 +33,10 @@ class Controls(tk.Frame):
         self.delete_btn.grid(row=2, sticky="ew")
         self.go_btn.grid(    row=3, sticky="ew")
 
-    def set_position(self, what):
-        print(what)
-
     def popup_save(self):
+        """Creates a pop-up window that shows the parsed coordinates.
+        The user can save it, choosing its type from a rolldown menu."""
+        
         # dummy position
         there = printer.Position(1, 1, 1)
         x, y, z = there.string_c()
@@ -88,12 +90,17 @@ class Controls(tk.Frame):
         popup.mainloop()
     
     def save_position(self, popup_win, name, x, y, z, postype):
+        """This is the real saving of a position, we get there from
+        the pop-up menu"""
         print("name = " + name + "; type: " + postype)
         self.posman.printer.save_position2(name, x, y, z, postype)
         self.posman.refresh()
         popup_win.destroy()
 
     def go_to_position(self):
+        """If there is a ceiling, sends the printer to the
+        given positions. If there is no ceiling set, the 
+        user has co confirm the movement."""
         if self.posman.printer.use_ceiling == None:
             warning = tk.Tk()
             warning.geometry('%dx%d+%d+%d' % (600, 120, 30, 200))
@@ -123,6 +130,7 @@ class Controls(tk.Frame):
             self.go_but_really(None)
     
     def go_but_really(self, root):
+        """The real G-code sending to the printer happens there"""
         try:
             name = self.posman.position_list.get(tk.ANCHOR).split(" ")[1]
         except IndexError:
@@ -133,6 +141,11 @@ class Controls(tk.Frame):
 
 
 class Positionlist(tk.Frame):
+    """Creates a scrollable list from the saved positions. The
+    saved positions are part of the Printer class. It also places
+    the control buttons (using Control class) next to it.
+    Displays the name, coordinates, type and marks the default
+    (used by printing) positions with a '#'  """
     def __init__(self, *args, printer, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
         self.printer = printer
@@ -180,6 +193,9 @@ class Positionlist(tk.Frame):
         self.scrollbar.config(command = self.position_list.yview )
 
     def select_default(self):
+        """Sets the selected position for use by grid printing.
+        Marked ceiling is also used in every movement to avoid
+        collosion."""
         try:
             name = self.position_list.get(tk.ANCHOR).split(" ")[1]
         except IndexError:
@@ -189,6 +205,9 @@ class Positionlist(tk.Frame):
         self.refresh()
 
     def refresh(self):
+        """Deletes the whole list and refills it with the
+        current positions. This is necessary to display newly
+        added positions and the markers of the used ones."""
         self.position_list.delete(0, tk.END)  #clear listbox
         for k in self.printer.positions:
             tick = " "
