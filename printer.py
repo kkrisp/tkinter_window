@@ -67,8 +67,8 @@ class Printer:
         self.m = Message(self.socket, self.header, wait=True, tries=3)
         if settings == None:
             self.settings={
-                "dst":2.5,  # distance
-                "d":  1.0,  # size
+                "dst":1.0,  # distance
+                "d":  0.2,  # size
                 "h"  :3.0,  # travel height
                 "row":3,    # columns
                 "col":3,    # rows

@@ -23,6 +23,9 @@ tk.Canvas.create_circle = _create_circle
 
 
 class Preview(tk.Frame):
+    """Creates a simple preview of the layout, using a
+    canavas geometries. It uses the given 'Printer' to
+    access the grid printing settings."""
     def __init__(self, *args, printer, **kwargs):
         tk.Frame.__init__(self, *args, **kwargs)
 
@@ -182,8 +185,8 @@ class Settings(tk.Frame):
         self.buttons["dst"+"_left"] = tk.Button(settings_frame, image=self.img_leftarrow, command=lambda: self.add(-0.1, "dst"))
         self.buttons["dst"+"_right"] = tk.Button(settings_frame, image=self.img_rightarrow, command=lambda: self.add(0.1, "dst"))
         
-        self.buttons["d"+"_left"] = tk.Button(settings_frame, image=self.img_leftarrow, command=lambda: self.add(-0.1, "d"))
-        self.buttons["d"+"_right"] = tk.Button(settings_frame, image=self.img_rightarrow, command=lambda: self.add(0.1, "d"))
+        self.buttons["d"+"_left"] = tk.Button(settings_frame, image=self.img_leftarrow, command=lambda: self.add(-0.01, "d"))
+        self.buttons["d"+"_right"] = tk.Button(settings_frame, image=self.img_rightarrow, command=lambda: self.add(0.01, "d"))
         
         self.buttons["row"+"_left"] = tk.Button(settings_frame, image=self.img_leftarrow, command=lambda:   self.add_int(-1,"row"))
         self.buttons["row"+"_right"] = tk.Button(settings_frame, image=self.img_rightarrow, command=lambda: self.add_int(1,"row"))

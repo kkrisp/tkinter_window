@@ -2,9 +2,9 @@ title_font = "Courier 13"
 title_color = '#d7dce0' #light, blueish gray
 entry_font = "Courier 13"
 entry_color = "white"
-label_font = "Courier 10"
+label_font = "Courier 11"
 button_font = "Courier 12"
-small_font = "Courier 10"
+small_font = "Courier 12"
 
 imgpath = 'img/' # path to the image files
 
@@ -21,7 +21,7 @@ large_font = "Courier 14 bold"
 
 border = 10
 dish_wall = 10
-droplet_ratio = 10.0
+droplet_ratio = 20.0
 
 dish_real_diameter = 35000 #um
 ratio = 1.0/90.0
