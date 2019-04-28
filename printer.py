@@ -232,8 +232,44 @@ class Config:
     def __init__(self, filename="cellprinter.cfg"):
         self.fn = filename
 
-    def save_settings(self, settings):
+    def save(self, printer):
         cfg = open(self.fn, 'w')
-        for k in settings:
-            cfg.write(k + " " + settings[k] + " " + type(settings[k]) + " \n")
+        cfg.write("#Settings:\n")
+        for k in printer.settings:
+            cfg.write(k +
+                    " " + str(printer.settings[k]) + " \n")
+        cfg.write("@Positions:\n")
+        for k in printer.positions:
+            x, y, z = printer.positions[k].string_c()
+            t = printer.positions[k].postype 
+            cfg.write(k + " " + x + " " + y + " " + z + " " + t + " \n")
+        cfg.close()
+
+    def load(self, printer):
+        cfg = open(self.fn, 'r')
+        at_pos = False
+        while True:
+            try:
+                line = cfg.readline()
+                lineID = line[0]
+            except IndexError:
+                break
+            if lineID == '#':
+                at_pos = False
+                continue
+            elif lineID == '@':
+                at_pos = True
+                continue
+            elif at_pos:
+                pass # saving positions
+            else:
+                w = line.split(" ")
+                if w[0] in ["row", "col"]:
+                    w[1] = int(w[1])
+                elif w[0] in ["eh", "s", "pul", "hex"]:
+                    if w[1] == "True": w[1] = True
+                    else: w[1] = False
+                else:
+                    w[1] = float(w[1])
+                printer.settings[w[0]] = w[1]
         cfg.close()
