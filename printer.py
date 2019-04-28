@@ -227,3 +227,13 @@ class Printer:
     def disconnect(self):
         self.socket.close()
         print("Disconnected from router.")
+
+class Config:
+    def __init__(self, filename="cellprinter.cfg"):
+        self.fn = filename
+
+    def save_settings(self, settings):
+        cfg = open(self.fn, 'w')
+        for k in settings:
+            cfg.write(k + " " + settings[k] + " " + type(settings[k]) + " \n")
+        cfg.close()
