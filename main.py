@@ -64,10 +64,10 @@ def main(printer):
     #tabs
     f1 = tk.Frame(notebook, bg='#f0f0f0', width=200, height=200)
     f2 = tk.Frame(notebook, bg='#f0f0f0', width=200, height=200)
-    f3 = tk.Frame(notebook, bg='#f0f0f0', width=200, height=200)
+    #f3 = tk.Frame(notebook, bg='#f0f0f0', width=200, height=200)
     notebook.add(f1, text='    Move     ')
     notebook.add(f2, text='    Print    ')
-    notebook.add(f3, text='    Test    ')
+    #notebook.add(f3, text='    Test    ')
     notebook.pack()
 
     # first tab (movements, camera and positions)

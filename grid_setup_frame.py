@@ -147,7 +147,7 @@ class Settings(tk.Frame):
 
         subtitle.grid(      row=0, column=0, sticky="nsew")
         settings_frame.grid(row=1,  column=0, sticky="nsew")
-        print_frame.grid(   row=2,  column=0, sticky="nsew", pady=20)
+        print_frame.grid(   row=2,  column=0, sticky="nsew", pady=5)
 
         self.print_btn = tk.Button(print_frame,
                                 text="start printing",
@@ -311,4 +311,3 @@ class Settings(tk.Frame):
             self.printer.printGrid_hex()
         else:
             self.printer.printGrid()
-        

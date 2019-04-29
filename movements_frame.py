@@ -53,6 +53,9 @@ class Move(tk.Frame):
         self.ex_entry_value.set(0.1) # fine step for the extruder
         
         # direction images (follows: up 0.1, up 1, up 10, down.., left.., right.. )
+        self.home_img = tk.PhotoImage(file=stl.imgpath+"home.png")
+        self.home_btn = tk.Button(self.xy_frame, image = self.home_img, command=self.move_home)
+
         self.button_img = []
         for i in range(12):
             self.button_img.append(tk.PhotoImage(file=stl.imgpath+"gl"+ str(i*5+2000) +".png"))
@@ -111,6 +114,7 @@ class Move(tk.Frame):
     # placing buttons and entries in the grid
         # head movements
         self.xy_label.grid(row=0, column=0, rowspan=2, columnspan=2)
+        self.home_btn.grid(row=5, column=0, rowspan=2, columnspan=2)
         self.buttons["up01"   ].grid(row=2, column=3)
         self.buttons["up"     ].grid(row=1, column=3)
         self.buttons["up10"   ].grid(row=0, column=3)
@@ -178,3 +182,6 @@ class Move(tk.Frame):
         d = eval(self.entries["ex"].get())*multiplier
         #print("moving {}, {}".format(direction, d))
         self.printer.m.send(direction+str(d))
+
+    def move_home(self):
+        self.printer.m.send("G28")

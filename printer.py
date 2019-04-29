@@ -229,6 +229,11 @@ class Printer:
         print("Disconnected from router.")
 
 class Config:
+    """Saves or loads the grid printing settings
+     and the saved positions to / from a text file.
+     Stores the filename only. For saving or loading
+     it needs a printer as paramether, where the data
+     is imported to / from."""
     def __init__(self, filename="cellprinter.cfg"):
         self.fn = filename
 
