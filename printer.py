@@ -233,6 +233,7 @@ class Config:
         self.fn = filename
 
     def save(self, printer):
+        #open(self.fn, 'w').close() # earse former contents
         cfg = open(self.fn, 'w')
         cfg.write("#Settings:\n")
         for k in printer.settings:
@@ -261,7 +262,8 @@ class Config:
                 at_pos = True
                 continue
             elif at_pos:
-                pass # saving positions
+                w = line.split(" ")
+                printer.positions[w[0]] = Position(int(w[1]), int(w[2]), int(w[3]), w[4])
             else:
                 w = line.split(" ")
                 if w[0] in ["row", "col"]:

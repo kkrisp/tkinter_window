@@ -24,7 +24,7 @@ class Controls(tk.Frame):
         self.new_btn = tk.Button(self, text="new", font=stl.entry_font,
                                 command=self.popup_save)
         self.delete_btn = tk.Button(self, text="delete", font=stl.entry_font,
-                                command=lambda: self.posman.position_list.delete(tk.ANCHOR))
+                                command=lambda: self.delete_pos())
         self.go_btn = tk.Button(self, text="go", font=stl.entry_font,
                                 command=self.go_to_position)
 
@@ -32,6 +32,14 @@ class Controls(tk.Frame):
         self.set_btn.grid(   row=1, sticky="ew")
         self.delete_btn.grid(row=2, sticky="ew")
         self.go_btn.grid(    row=3, sticky="ew")
+
+    def delete_pos(self):
+        try:
+            name = self.posman.position_list.get(tk.ANCHOR).split(" ")[1]
+        except IndexError:
+            return
+        self.posman.printer.positions.pop(name)
+        self.posman.position_list.delete(tk.ANCHOR)
 
     def popup_save(self):
         """Creates a pop-up window that shows the parsed coordinates.
@@ -42,6 +50,7 @@ class Controls(tk.Frame):
         x, y, z = there.string_c()
         popup_root = tk.Tk()
         popup_root.geometry('%dx%d+%d+%d' % (300, 130, 200, 200))
+        popup_root.geometry
         popup_root.wm_title("New position")
         popup = tk.Frame(popup_root, padx = 15, pady = 15)
         popup.grid()
@@ -65,7 +74,10 @@ class Controls(tk.Frame):
         
 
         namevar = tk.StringVar(popup)
-        namevar.set("new" + strftime("%H%M%S"))
+        # naming by save time
+        #namevar.set("new" + strftime("%H%M%S"))
+        # naming by number of positions
+        namevar.set("new-" + str(len(self.posman.printer.positions)+1) )
         
         new_name = tk.Entry(popup, text=namevar,
                         width=15,
@@ -92,7 +104,7 @@ class Controls(tk.Frame):
     def save_position(self, popup_win, name, x, y, z, postype):
         """This is the real saving of a position, we get there from
         the pop-up menu"""
-        print("name = " + name + "; type: " + postype)
+        #print("name = " + name + "; type: " + postype)
         self.posman.printer.save_position2(name, x, y, z, postype)
         self.posman.refresh()
         popup_win.destroy()
